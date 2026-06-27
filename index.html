@@ -123,6 +123,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC"
 @keyframes pageEnter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(16px) scale(0.92)}to{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}}
 @keyframes toastOut{from{opacity:1;transform:translateX(-50%) translateY(0)}to{opacity:0;transform:translateX(-50%) translateY(16px)}}
+@keyframes resultIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 
@@ -582,6 +583,10 @@ function doSearch() {
     html += '</div>';
   });
   document.getElementById('searchResults').innerHTML = html;
+  // Stagger animation for search results
+  document.querySelectorAll('#searchResults .result-item').forEach(function(el, i) {
+    el.style.animation = 'resultIn ' + (i * 0.07) + 's ease both';
+  });
 }
 
 function updateDocCount() {
