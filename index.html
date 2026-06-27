@@ -11,25 +11,26 @@
 :root {
   --primary: #8b5cf6; --primary-dark: #7c3aed;
   --accent: #a78bfa; --accent-light: #f5f3ff;
-  --bg: #f8fafc; --card: #ffffff;
-  --border: #e2e8f0; --text: #0f172a; --muted: #64748b;
+  --bg: #f2efe8; --card: rgba(255,255,255,0.7);
+  --border: rgba(0,0,0,0.07); --text: #1d1d1f; --muted: #6e6e73;
   --success: #16a34a; --danger: #dc2626; --warning: #d97706;
-  --radius: 16px; --radius-sm: 10px;
-  --shadow: 0 1px 3px rgba(0,0,0,0.06);
+  --radius: 20px; --radius-sm: 12px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.04);
   --shadow-lg: 0 10px 30px rgba(0,0,0,0.08);
+  --spring: 0.35s cubic-bezier(0.22, 0.1, 0.2, 1);
   --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
   --highlight: #fef08a;
 }
 [data-theme="dark"] {
   --primary: #a78bfa; --primary-dark: #8b5cf6;
   --accent: #c4b5fd; --accent-light: #1e1b4b;
-  --bg: #0b1120; --card: #1e293b;
-  --border: #334155; --text: #f1f5f9; --muted: #94a3b8;
+  --bg: #1a1917; --card: rgba(36,35,33,0.76);
+  --border: rgba(255,255,255,0.07); --text: #f5f5f7; --muted: #98989d;
   --highlight: #854d0e;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh;transition:background var(--transition),color var(--transition)}
-.container{max-width:1000px;margin:0 auto;padding:16px 20px}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Noto Sans SC",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh;transition:background 0.4s ease,color 0.4s ease;letter-spacing:-0.01em var(--spring),color var(--spring)}
+.container{animation:pageEnter 0.45s var(--spring);max-width:1000px;margin:0 auto;padding:16px 20px}
 
 .header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:16px 24px;margin-bottom:16px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
 .header-brand{display:flex;align-items:center;gap:10px}
@@ -39,7 +40,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 .header-right{display:flex;align-items:center;gap:12px}
 .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:var(--accent-light);color:var(--primary-dark);border-radius:20px;font-size:13px;font-weight:600}
 
-.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;transition:all var(--transition);font-family:inherit}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;transition:all var(--spring);font-family:inherit}
 .btn-primary{background:var(--primary);color:#fff}
 .btn-primary:hover{background:var(--primary-dark);transform:translateY(-1px)}
 .btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
@@ -47,32 +48,32 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 .btn-outline:hover{background:var(--accent-light)}
 .btn-sm{padding:6px 14px;font-size:13px}
 .btn-danger{background:var(--danger);color:#fff}
-.theme-toggle{width:40px;height:40px;border:2px solid var(--border);border-radius:50%;background:var(--card);cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;transition:all var(--transition)}
+.theme-toggle{width:40px;height:40px;border:2px solid var(--border);border-radius:50%;background:var(--card);cursor:pointer;font-size:20px;display:flex;align-items:center;justify-content:center;transition:all var(--spring)}
 .theme-toggle:hover{border-color:var(--primary);transform:rotate(15deg)}
 
 .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;margin-bottom:16px;border:1px solid var(--border)}
 
 /* ── Search ── */
 .search-box{display:flex;gap:8px;margin-bottom:12px}
-.search-box input{flex:1;padding:12px 16px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:16px;font-family:inherit;background:var(--card);color:var(--text);transition:border-color var(--transition)}
+.search-box input{flex:1;padding:12px 16px;border:2px solid var(--border);border-radius:var(--radius-sm);font-size:16px;font-family:inherit;background:var(--card);color:var(--text);transition:border-color var(--spring)}
 .search-box input:focus{outline:none;border-color:var(--primary)}
 .search-box input::placeholder{color:var(--muted)}
 
 /* ── Toolbar ── */
 .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
-.filter-tag{padding:4px 14px;border:1px solid var(--border);border-radius:16px;font-size:12px;font-weight:600;cursor:pointer;transition:all var(--transition);color:var(--muted);background:var(--card)}
+.filter-tag{padding:4px 14px;border:1px solid var(--border);border-radius:16px;font-size:12px;font-weight:600;cursor:pointer;transition:all var(--spring);color:var(--muted);background:var(--card)}
 .filter-tag:hover,.filter-tag.active{border-color:var(--primary);color:var(--primary);background:var(--accent-light)}
 
 /* ── Policy Catalog ── */
 .catalog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin-bottom:16px}
-.catalog-item{display:flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;transition:all var(--transition);background:var(--card)}
+.catalog-item{display:flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;transition:all var(--spring);background:var(--card)}
 .catalog-item:hover{border-color:var(--primary);background:var(--accent-light)}
 .catalog-item .ci-status{font-size:11px;margin-left:auto;color:var(--muted)}
 .catalog-item.cached .ci-status{color:var(--success)}
 
 /* ── Results ── */
 .result-count{font-size:13px;color:var(--muted);margin-bottom:12px}
-.result-item{padding:16px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:10px;transition:all var(--transition);cursor:pointer}
+.result-item{padding:16px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:10px;transition:all var(--spring);cursor:pointer}
 .result-item:hover{border-color:var(--primary);box-shadow:var(--shadow)}
 .result-header{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin-bottom:6px}
 .result-title{font-weight:700;font-size:15px}
@@ -92,7 +93,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 .fetch-status.error{display:block;background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
 
 /* ── Toast ── */
-.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);z-index:2000;padding:12px 24px;border-radius:24px;font-size:14px;font-weight:600;color:#fff;background:#1e293b;box-shadow:var(--shadow-lg);animation:toastIn .3s ease}
+.toast{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);z-index:2000;padding:12px 24px;border-radius:24px;font-size:14px;font-weight:600;color:#fff;background:rgba(30,30,32,0.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:var(--shadow-lg);animation:toastIn .3s ease}
 .toast.success{background:var(--success)}
 .toast.warn{background:var(--warning);color:#1e293b}
 .toast.error{background:var(--danger)}
@@ -119,6 +120,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 
 .footer{text-align:center;padding:16px;font-size:12px;color:var(--muted);border-top:1px solid var(--border);margin-top:24px}
 
+@keyframes pageEnter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(16px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 @keyframes toastOut{from{opacity:1;transform:translateX(-50%) translateY(0)}to{opacity:0;transform:translateX(-50%) translateY(16px)}}
 @keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
@@ -135,9 +137,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
   .header-logo{font-size:24px}
   .btn{padding:8px 14px;font-size:12px}
 }
+
+/* ── Atmosphere ── */
+.atmo{position:fixed;inset:0;pointer-events:none;z-index:0}
+.atmo .orb{position:absolute;border-radius:50%;filter:blur(140px);opacity:0.35}
+.atmo .orb:nth-child(1){width:60vw;height:60vw;background:radial-gradient(circle,rgba(210,160,100,0.12),transparent);top:-25vh;left:-20vw}
+.atmo .orb:nth-child(2){width:50vw;height:50vw;background:radial-gradient(circle,rgba(100,175,165,0.09),transparent);bottom:-20vh;right:-15vw}
+.grid-texture{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.18;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:80px 80px;mask-image:radial-gradient(ellipse 70% 55% at 50% 45%,black 15%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse 70% 55% at 50% 45%,black 15%,transparent 70%)}
+
+.page-exit-overlay{position:fixed;inset:0;z-index:9999;background:var(--bg);opacity:0;pointer-events:none;transition:opacity 0.3s ease}.page-exit-overlay.go{opacity:1;pointer-events:all}
 </style>
 </head>
 <body>
+
+<div class="atmo"><div class="orb"></div><div class="orb"></div></div>
+<div class="grid-texture"></div>
+<div class="page-exit-overlay" id="exitOverlay"></div>
 
 <div class="container">
 <header class="header">
@@ -172,7 +187,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 </div>
 
 <div class="footer">
-  ⚡ 数据不上传服务器 · 本地缓存 · 官网直抓 &nbsp;|&nbsp; PolicySearch v2.0.0
+  本地处理 · 官网直抓 &nbsp;|&nbsp; PolicySearch v2.0.0
 </div>
 </div>
 
@@ -794,6 +809,7 @@ function init() {
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+window.addEventListener('beforeunload',function(){var e=document.getElementById('exitOverlay');if(e)e.classList.add('go');});
 </script>
 </body>
 </html>
