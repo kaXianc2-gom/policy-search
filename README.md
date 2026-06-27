@@ -1,7 +1,7 @@
 # PolicySearch — 政策文件搜索
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-2.1.0-brightgreen)](https://github.com/kaXianc2-gom/policy-search/releases)
+[![Version](https://img.shields.io/badge/version-2.1.1-brightgreen)](https://github.com/kaXianc2-gom/policy-search/releases)
 [![Pages](https://img.shields.io/badge/demo-online-0078D4)](https://kaXianc2-gom.github.io/policy-search/)
 
 > 输入关键词，从 gov.cn 实时抓取政策全文，本地缓存供检索。同义词自动扩展。
