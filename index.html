@@ -268,12 +268,18 @@ const CORS_PROXIES = [
   function(url) { return 'https://cors-anywhere.herokuapp.com/' + url; }
 ];
 
+function fetchWithTimeout(url, ms) {
+  let ctrl = new AbortController();
+  let timer = setTimeout(function() { ctrl.abort(); }, ms);
+  return fetch(url, { signal: ctrl.signal }).finally(function() { clearTimeout(timer); });
+}
+
 async function fetchWithProxy(url) {
   let errors = [];
   for (let i = 0; i < CORS_PROXIES.length; i++) {
     try {
       let proxyUrl = CORS_PROXIES[i](url);
-      let resp = await fetch(proxyUrl, { signal: AbortSignal.timeout(20000) });
+      let resp = await fetchWithTimeout(proxyUrl, 20000);
       if (!resp.ok) throw new Error('HTTP ' + resp.status);
       let text = await resp.text();
       if (text.length < 500) throw new Error('Response too short (' + text.length + ' chars)');
