@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="description" content="政策文件搜索工具 — 同义词扩展+模糊匹配+关键词高亮，内嵌5篇核心政策文档">
+<meta name="theme-color" content="#8b5cf6">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
 <title>PolicySearch — 政策文件搜索</title>
 <style>
 :root {
@@ -151,7 +154,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 <div class="tab-content active" id="tab-search">
   <div class="card">
     <div class="search-box">
-      <input type="text" id="searchInput" placeholder="输入关键词，如：乡村振兴 基层治理 共同富裕…" autofocus>
+      <input type="text" id="searchInput" aria-label="搜索政策文件" placeholder="输入关键词，如：乡村振兴 基层治理 共同富裕…" autofocus>
       <button class="btn btn-primary" id="btnSearch">🔍 搜索</button>
     </div>
     <div class="filter-tags" id="filterTags"></div>
@@ -188,10 +191,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Micr
 </div>
 
 <script>
+"use strict";
 // ═══════════════════════════════════════════════
 //  POLICY DOCUMENTS (excerpts, 8 docs)
 // ═══════════════════════════════════════════════
-var DOCUMENTS = [
+const DOCUMENTS = [
   {
     id: '20th',
     title: '党的二十大报告',
@@ -261,7 +265,7 @@ var DOCUMENTS = [
 // ═══════════════════════════════════════════════
 //  SYNONYM DICTIONARY (~80 pairs)
 // ═══════════════════════════════════════════════
-var SYNONYM_MAP = {
+const SYNONYM_MAP = {
   '乡村振兴': ['农业农村现代化','乡村发展','三农工作','农村振兴'],
   '共同富裕': ['共享发展','缩小差距','共同富裕示范区'],
   '中国式现代化': ['社会主义现代化','现代化建设','民族复兴'],
@@ -287,23 +291,23 @@ var SYNONYM_MAP = {
 // ═══════════════════════════════════════════════
 //  INVERTED INDEX (2-gram)
 // ═══════════════════════════════════════════════
-var INDEX = {};  // { ngram: { docId: [positions] } }
+let INDEX = {};  // { ngram: { docId: [positions] } }
 
 function buildIndex() {
   INDEX = {};
   DOCUMENTS.forEach(function(doc) {
-    var text = doc.content;
+    let text = doc.content;
     // Extract all 2-grams
-    for (var i = 0; i < text.length - 1; i++) {
-      var ng = text.substring(i, i + 2);
+    for (let i = 0; i < text.length - 1; i++) {
+      let ng = text.substring(i, i + 2);
       if (!INDEX[ng]) INDEX[ng] = {};
       if (!INDEX[ng][doc.id]) INDEX[ng][doc.id] = [];
       INDEX[ng][doc.id].push(i);
     }
   });
   // Also index 1-grams for single-char queries
-  for (var i = 0; i < text.length; i++) {
-    var ng = text[i];
+  for (let i = 0; i < text.length; i++) {
+    let ng = text[i];
     if (!/[一-鿿]/.test(ng)) continue;
     if (!INDEX[ng]) INDEX[ng] = {};
     if (!INDEX[ng][doc.id]) INDEX[ng][doc.id] = [];
@@ -315,7 +319,7 @@ function buildIndex() {
 //  SEARCH ENGINE
 // ═══════════════════════════════════════════════
 function expandQuery(query) {
-  var terms = [query];
+  let terms = [query];
   // Check direct synonym
   if (SYNONYM_MAP[query]) {
     terms = terms.concat(SYNONYM_MAP[query]);
@@ -344,14 +348,14 @@ function expandQuery(query) {
 function search(query, filterCat) {
   if (!query.trim()) return { results: [], expandedTerms: [] };
 
-  var expandedTerms = expandQuery(query.trim());
-  var docScores = {};  // { docId: score }
+  let expandedTerms = expandQuery(query.trim());
+  let docScores = {};  // { docId: score }
 
   expandedTerms.forEach(function(term) {
-    var subResults = searchTerm(term);
+    let subResults = searchTerm(term);
     Object.keys(subResults).forEach(function(docId) {
       if (filterCat) {
-        var doc = DOCUMENTS.find(function(d) { return d.id === docId; });
+        let doc = DOCUMENTS.find(function(d) { return d.id === docId; });
         if (!doc || doc.category !== filterCat) return;
       }
       docScores[docId] = (docScores[docId] || 0) + subResults[docId];
@@ -359,8 +363,8 @@ function search(query, filterCat) {
   });
 
   // Convert to sorted array
-  var results = Object.keys(docScores).map(function(docId) {
-    var doc = DOCUMENTS.find(function(d) { return d.id === docId; });
+  let results = Object.keys(docScores).map(function(docId) {
+    let doc = DOCUMENTS.find(function(d) { return d.id === docId; });
     return { doc: doc, score: docScores[docId], highlights: getHighlights(doc, expandedTerms) };
   }).filter(function(r) { return r.doc && r.score > 0; });
 
@@ -370,15 +374,15 @@ function search(query, filterCat) {
 }
 
 function searchTerm(term) {
-  var scores = {};
+  let scores = {};
   // Use 2-grams from the term
-  var ngrams = [];
-  for (var i = 0; i < term.length - 1; i++) ngrams.push(term.substring(i, i + 2));
+  let ngrams = [];
+  for (let i = 0; i < term.length - 1; i++) ngrams.push(term.substring(i, i + 2));
   if (term.length === 1) ngrams.push(term);
 
   // Also try full term as exact match
   DOCUMENTS.forEach(function(doc) {
-    var count = countOccurrences(doc.content, term);
+    let count = countOccurrences(doc.content, term);
     if (count > 0) {
       scores[doc.id] = (scores[doc.id] || 0) + count * 5; // exact match bonus
     }
@@ -386,7 +390,7 @@ function searchTerm(term) {
 
   // N-gram matching
   ngrams.forEach(function(ng) {
-    var posting = INDEX[ng];
+    let posting = INDEX[ng];
     if (!posting) return;
     Object.keys(posting).forEach(function(docId) {
       scores[docId] = (scores[docId] || 0) + posting[docId].length;
@@ -395,7 +399,7 @@ function searchTerm(term) {
 
   // Normalize by document length (BM25-like)
   Object.keys(scores).forEach(function(docId) {
-    var doc = DOCUMENTS.find(function(d) { return d.id === docId; });
+    let doc = DOCUMENTS.find(function(d) { return d.id === docId; });
     if (doc) scores[docId] = scores[docId] / (1 + Math.log(doc.content.length / 100));
   });
 
@@ -403,22 +407,22 @@ function searchTerm(term) {
 }
 
 function countOccurrences(text, term) {
-  var count = 0, pos = 0;
+  let count = 0, pos = 0;
   while ((pos = text.indexOf(term, pos)) !== -1) { count++; pos += term.length; }
   return count;
 }
 
 function getHighlights(doc, terms) {
-  var text = doc.content;
-  var snippets = [];
-  var windowSize = 80;
+  let text = doc.content;
+  let snippets = [];
+  let windowSize = 80;
 
   terms.forEach(function(term) {
-    var pos = 0;
+    let pos = 0;
     while ((pos = text.indexOf(term, pos)) !== -1) {
-      var start = Math.max(0, pos - windowSize / 2);
-      var end = Math.min(text.length, pos + term.length + windowSize / 2);
-      var snippet = text.substring(start, end);
+      let start = Math.max(0, pos - windowSize / 2);
+      let end = Math.min(text.length, pos + term.length + windowSize / 2);
+      let snippet = text.substring(start, end);
       if (start > 0) snippet = '…' + snippet;
       if (end < text.length) snippet = snippet + '…';
       // Highlight all expanded terms
@@ -437,11 +441,11 @@ function getHighlights(doc, terms) {
 // ═══════════════════════════════════════════════
 //  RENDER
 // ═══════════════════════════════════════════════
-var currentFilter = null;
+let currentFilter = null;
 
 function renderDocList(filterCat) {
-  var docs = filterCat ? DOCUMENTS.filter(function(d) { return d.category === filterCat; }) : DOCUMENTS;
-  var html = '';
+  let docs = filterCat ? DOCUMENTS.filter(function(d) { return d.category === filterCat; }) : DOCUMENTS;
+  let html = '';
   docs.forEach(function(doc) {
     html += '<div class="doc-card" onclick="openDoc(\'' + doc.id + '\')">';
     html += '<div class="doc-card-title">' + escHtml(doc.title) + '</div>';
@@ -449,13 +453,13 @@ function renderDocList(filterCat) {
     html += '<div class="doc-card-desc">' + escHtml(doc.desc) + '</div>';
     html += '</div>';
   });
-  document.getElementById('docList').innerHTML = html || '<div style="color:var(--muted)">暂无文档</div>';
+  document.getElementById('docList').innerHTML = html || '<div style="color:let(--muted)">暂无文档</div>';
 }
 
 function renderBrowseFilters() {
-  var cats = {};
+  let cats = {};
   DOCUMENTS.forEach(function(d) { cats[d.category] = true; });
-  var html = '<span class="filter-tag active" data-cat="">全部 (' + DOCUMENTS.length + ')</span>';
+  let html = '<span class="filter-tag active" data-cat="">全部 (' + DOCUMENTS.length + ')</span>';
   Object.keys(cats).forEach(function(c) {
     html += '<span class="filter-tag" data-cat="' + c + '">' + c + '</span>';
   });
@@ -471,9 +475,9 @@ function renderBrowseFilters() {
 }
 
 function renderSearchFilters() {
-  var cats = {};
+  let cats = {};
   DOCUMENTS.forEach(function(d) { cats[d.category] = true; });
-  var html = '<span class="filter-tag active" data-cat="">全部</span>';
+  let html = '<span class="filter-tag active" data-cat="">全部</span>';
   Object.keys(cats).forEach(function(c) {
     html += '<span class="filter-tag" data-cat="' + c + '">' + c + '</span>';
   });
@@ -490,15 +494,15 @@ function renderSearchFilters() {
 }
 
 function doSearch() {
-  var query = document.getElementById('searchInput').value;
+  let query = document.getElementById('searchInput').value;
   if (!query.trim()) {
-    document.getElementById('searchResults').innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted)">输入关键词开始搜索</div>';
+    document.getElementById('searchResults').innerHTML = '<div style="text-align:center;padding:32px;color:let(--muted)">输入关键词开始搜索</div>';
     document.getElementById('resultCount').textContent = '';
     document.getElementById('synonymInfo').style.display = 'none';
     return;
   }
 
-  var result = search(query, currentFilter);
+  let result = search(query, currentFilter);
 
   document.getElementById('resultCount').textContent = '找到 ' + result.results.length + ' 篇相关文档';
 
@@ -511,11 +515,11 @@ function doSearch() {
   }
 
   if (!result.results.length) {
-    document.getElementById('searchResults').innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted)">🔍 未找到相关结果，试试其他关键词</div>';
+    document.getElementById('searchResults').innerHTML = '<div style="text-align:center;padding:32px;color:let(--muted)">🔍 未找到相关结果，试试其他关键词</div>';
     return;
   }
 
-  var html = '';
+  let html = '';
   result.results.forEach(function(r) {
     html += '<div class="result-item" onclick="openDoc(\'' + r.doc.id + '\')">';
     html += '<div class="result-header"><span class="result-title">' + escHtml(r.doc.title) + '</span>';
@@ -533,10 +537,10 @@ function doSearch() {
 }
 
 function openDoc(docId) {
-  var doc = DOCUMENTS.find(function(d) { return d.id === docId; });
+  let doc = DOCUMENTS.find(function(d) { return d.id === docId; });
   if (!doc) return;
   document.getElementById('modalTitle').textContent = doc.title + '（' + doc.year + '）';
-  var html = '<div style="margin-bottom:12px;font-size:13px;color:var(--muted)">分类：' + doc.category + '</div>';
+  let html = '<div style="margin-bottom:12px;font-size:13px;color:let(--muted)">分类：' + doc.category + '</div>';
   html += '<div style="white-space:pre-wrap">' + escHtml(doc.content) + '</div>';
   document.getElementById('modalBody').innerHTML = html;
   document.getElementById('modalOverlay').classList.add('open');
@@ -546,7 +550,7 @@ function closeModal() { document.getElementById('modalOverlay').classList.remove
 function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function toast(msg, type) {
-  var el = document.createElement('div');
+  let el = document.createElement('div');
   el.className = 'toast' + (type ? ' ' + type : '');
   el.textContent = msg;
   document.body.appendChild(el);
@@ -554,11 +558,11 @@ function toast(msg, type) {
 }
 
 function toggleTheme() {
-  var cur = document.documentElement.getAttribute('data-theme');
-  var next = cur === 'dark' ? '' : 'dark';
+  let cur = document.documentElement.getAttribute('data-theme');
+  let next = cur === 'dark' ? '' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
   document.getElementById('themeToggle').textContent = next ? '☀️' : '🌙';
-  try { localStorage.setItem('policysearch_theme', next || 'light'); } catch(e) {}
+  try { localStorage.setItem('gwy_policysearch_theme', next || 'light'); } catch(e) {}
 }
 
 function switchTab(name) {
@@ -574,7 +578,7 @@ function init() {
 
   // Theme
   try {
-    var tm = localStorage.getItem('policysearch_theme');
+    let tm = localStorage.getItem('gwy_policysearch_theme') || localStorage.getItem('policysearch_theme');
     if (tm === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
   } catch(e) {}
   document.getElementById('themeToggle').textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
@@ -611,7 +615,7 @@ function init() {
 //  TESTS
 // ═══════════════════════════════════════════════
 function runTests() {
-  var results = [];
+  let results = [];
   function t(name, fn) {
     try { results.push({ name: name, pass: !!fn() }); }
     catch(e) { results.push({ name: name, pass: false, error: e.message }); }
@@ -625,12 +629,12 @@ function runTests() {
   t('search: 乡村振兴 returns results', function() { return search('乡村振兴').results.length > 0; });
   t('search: 共同富裕 returns results', function() { return search('共同富裕').results.length > 0; });
   t('search: empty query', function() { return search('').results.length === 0; });
-  t('search with filter', function() { var r = search('法治', '法治'); return r.results.length > 0; });
+  t('search with filter', function() { let r = search('法治', '法治'); return r.results.length > 0; });
   t('SYNONYM_MAP has 20+ entries', function() { return Object.keys(SYNONYM_MAP).length >= 20; });
 
-  var passed = results.filter(function(r) { return r.pass; }).length;
-  var total = results.length;
-  var color = passed === total ? 'green' : 'orange';
+  let passed = results.filter(function(r) { return r.pass; }).length;
+  let total = results.length;
+  let color = passed === total ? 'green' : 'orange';
   console.log('%c📋 PolicySearch Tests: ' + passed + '/' + total + ' passed', 'font-size:16px;font-weight:bold;color:' + color);
   results.forEach(function(r) { console.log(r.pass ? '  ✅' : '  ❌', r.name, r.error ? '(' + r.error + ')' : ''); });
   if (passed < total) console.warn('⚠ ' + (total - passed) + ' tests failed');
