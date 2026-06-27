@@ -1,5 +1,9 @@
 # PolicySearch — 政策文件搜索
 
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/version-2.1.0-brightgreen)](https://github.com/kaXianc2-gom/policy-search/releases)
+[![Pages](https://img.shields.io/badge/demo-online-0078D4)](https://kaXianc2-gom.github.io/policy-search/)
+
 > 输入关键词，从 gov.cn 实时抓取政策全文，本地缓存供检索。同义词自动扩展。
 
 单文件 HTML，双击即用。不是 AI 搜索，是本地 TF 词频匹配 + 政府官网直抓 + 粘贴文本导入。
@@ -23,6 +27,18 @@
 **搜索**：TF 词频评分 + 20 组同义词扩展（搜"乡村振兴"自动扩展为"三农工作""千万工程"等）。
 
 **目录**：内置 20 篇常用政策 URL，也可以自己输入 gov.cn 链接抓取。
+
+## 🌐 在线体验
+
+无需下载，直接使用：**[🔗 在线 Demo](https://kaXianc2-gom.github.io/policy-search/)**
+
+## 🔐 隐私声明
+
+- **搜索完全本地**：TF 词频匹配在浏览器中完成，关键词不上传
+- **缓存本地存储**：抓取的文档存 localStorage，离线可用
+- **CORS 代理仅转发**：抓取 gov.cn 时使用公共 CORS 代理，代理不记录请求内容（仅做 HTTP 转发）
+
+> ⚠️ **免责声明**：抓取内容来自 gov.cn 等政府网站。搜索结果仅供参考，以原始政策文件为准。
 
 ## 技术
 

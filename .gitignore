@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Python (build scripts)
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Temp files
+*.tmp
+*.bak
+
+# Local test data (keep sample)
+*.xlsx
+*.xls
+!examples/sample_data.xlsx
